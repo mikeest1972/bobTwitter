@@ -18,16 +18,16 @@ class BobTwitterBot():
     def getKeys(self):
         # gets the keys from the files 
         f = open("apiKey", 'r')
-        self.apiKey = f.read()
+        self.apiKey = f.read().split()[0]
         f.close()
         f = open("apiSecretKey", 'r')
-        self.apiSecretKey = f.read()
+        self.apiSecretKey = f.read().split()[0]
         f.close()
         f = open("accessToken",'r')
-        self.accesToken = f.read()
+        self.accesToken = f.read().split()[0]
         f.close()
         f = open("accessTokenSecret",'r')
-        self.accesTokenSecret = f.read()
+        self.accesTokenSecret = f.read().split()[0]
         f.close()
 
     def auth(self):
@@ -39,7 +39,9 @@ class BobTwitterBot():
         f = open("hashtags.txt", 'r')
         s = f.read()
         self.hashTags = s.split(",")
-        
+        listLen = len(self.hashTags) -1
+        self.hashTags[listLen] = self.hashTags[listLen].split()[0]
+        print(self.hashTags[listLen])
             
         pass
     def findWhatToRetweet(self, hashTag):

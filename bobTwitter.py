@@ -1,3 +1,4 @@
+from os import error
 import tweepy
 import time
 import urllib
@@ -32,7 +33,7 @@ class BobTwitterBot():
     def auth(self):
         auth = tweepy.OAuthHandler(self.apiKey, self.apiSecretKey)
         auth.set_access_token(self.accesToken,self.accesTokenSecret)
-        self.api = tweepy.API(auth,wait_on_rate_limit=True,wait_on_rate_limit_notify=True)
+        self.api = tweepy.API(auth,wait_on_rate_limit=True)#,wait_on_rate_limit_notify=True)
     
     def loadHashTags(self):
         f = open("hashtags.txt", 'r')
@@ -43,7 +44,7 @@ class BobTwitterBot():
         pass
     def findWhatToRetweet(self, hashTag):
         selected = None
-        for tweet in tweepy.Cursor(self.api.search, q=hashTag).items(20):
+        for tweet in tweepy.Cursor(self.api.search_tweets, q=hashTag).items(20):
             if(selected == None):
                 selected = tweet
             
@@ -52,11 +53,12 @@ class BobTwitterBot():
             #print("Temp fav: " + str(selected.favorite_count))
         #print("Hahstag: " + hashTag)
         #print("Favorite count: " + str(selected.favorite_count))
-        print("Should retweet: ")
+        print("Should retweet: " + selected.text)
         try:
             self.api.retweet(selected.id)
-            selected.favorite()
-        except tweepy.TweepError as identifier:
+            self.api.create_favorite(selected.id)
+        except Exception as identifier:#tweepy.errors as identifier:
+            print(identifier)
             print("Failed will not tweet or like")
         
 
@@ -70,6 +72,6 @@ print("Bob twitter bot")
 
 bob = BobTwitterBot()
 bob.controlFunc() # tweets everything every time it runs
-    
+
 #bob.findWhatToRetweet("#100DaysOfCode")
 
